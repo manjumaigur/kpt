@@ -55,6 +55,13 @@ if __name__ == "__main__":
         "--checkpoint", type=str, help="path to model checkpoint", required=True
     )
     parser.add_argument(
+        "--type",
+        default="small",
+        nargs="?",
+        choices=["small", "large"],
+        help="type of model: small or large",
+    )
+    parser.add_argument(
         "--tokenizer", type=str, help="path to tokenizer .bpe file", required=True
     )
     parser.add_argument("--input", type=str, help="input text", required=True)
@@ -70,6 +77,7 @@ if __name__ == "__main__":
     max_length = args.max_length
     checkpoint_path = args.checkpoint
     tokenizer_bpe_file_path = args.tokenizer
+    model_type = args.type
 
     if input_text == "":
         raise ValueError("Input cannot be empty")
@@ -85,7 +93,7 @@ if __name__ == "__main__":
 
     model_configs = None
     with open("config.json", "r") as f:
-        model_configs = json.load(f)["small"]
+        model_configs = json.load(f)[model_type]
 
     model_configs = KPTConfig(**model_configs)
     model = KPT(model_configs)
