@@ -32,14 +32,14 @@ KPT is an Indic large language model series trained on a dataset with both Kanna
 -   The model architecture is the same as that of GPT-2 and GPT-3 but with Squared ReLU activation in Feed Forward Networks instead of ReLU or GELU..
 -   Model implementation is kept simple for easy understanding and debugging.
 -   Two versions of the model (KPT-125M and KPT-760M) are being trained on 4xA100 80 GB GPUs.
-    -   A checkpoint (trained on ~6 billion tokens) of KPT-125M is available [here](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-125M%2Fmodel_12300.pt).
+    -   A checkpoint (trained on ~6 billion tokens) of KPT-125M is available [here]().
     -   Better checkpoints for KPT-125M and KPT-760M will be made available as soon as they're ready.
 
 ## Instructions to use the model
 
 The model is not yet fine-tuned on any downstream task or instruct datasets and hence can only be used for completion and embeddings (probably).
 
--   Download the model and tokenizer from here
+-   Download the [checkpoint](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-125M%2Fmodel_12300.pt) and [tokenizer](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-125M%2Fkpt50k.bpe).
 -   Install the required libraries using `pip install -r requirements.txt`. There are only two external dependencies :)
 -   Run the following code to generate completions:
 
