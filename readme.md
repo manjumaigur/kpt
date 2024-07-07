@@ -5,7 +5,7 @@ KPT is an Indic large language model series trained on a dataset with both Kanna
 -   Kannada text from the [sangraha corpus](https://huggingface.co/datasets/ai4bharat/sangraha) and a subset of English text from [Fineweb-Edu](https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu) are used for training
 -   A new tokenizer is trained (using BPE) from scratch using a sampled dataset from the above sources.
 -   The training dataset consists of ~16 billion tokens generated using a combined corpus of Kannada and English text tokenized using the custom tokenizer.
--   The model is being trained on 4xA100 80 GB GPUs. An early checkpoint (31300 steps/~16B tokens) of KPT-125M is available [here](#model-details)
+-   The model is being trained on 4xA100 80 GB GPUs. Checkpoints for both 125M and 750M models are available [here](#model-details)
 
 > NOTE: This is a fun experiment and not an LLM model to be taken seriously.
 
@@ -32,7 +32,8 @@ KPT is an Indic large language model series trained on a dataset with both Kanna
 -   The model architecture is the same as that of GPT-2 and GPT-3 but with Squared ReLU activation in Feed Forward Networks instead of ReLU or GELU.
 -   Model implementation is kept simple for easy understanding and debugging.
 -   Two versions of the model (KPT-125M and KPT-760M) are being trained on 4xA100 80 GB GPUs.
-    -   A checkpoint of KPT-125M trained for 31300 steps is available [here](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-125M%2Fmodel_31299.pt).
+    -   A checkpoint of KPT-125M trained for 31300 steps (~16B tokens) is available [here](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-125M%2Fmodel_31299.pt).
+    -   An early checkpoint of KPT-750M trained for 7400 steps (~3.7B tokens) is available [here](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-750M%2Fmodel_07400.pt).
     -   Better checkpoints for KPT-125M and KPT-760M will be made available as soon as they're ready.
     -   KPT-125M achieves 27.71% accuracy on Hellaswag validation set without any fine-tuning. I've not found a good original (without translation from english) eval dataset for Kannada yet, so I'm using Hellaswag for now.
 
