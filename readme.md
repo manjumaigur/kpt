@@ -44,7 +44,7 @@ The model is not yet fine-tuned on any downstream task or instruct datasets and 
 -   Run the following code to generate completions:
 
 ```python
-python inference.py --checkpoint <path_to_model> --input "" --max-length <max-length>
+python inference.py --checkpoint <path_to_model> --tokenizer <path_to_tokenizer_.bpe_file> --input "" --max-length <max-length>
 ```
 
 -   The model will probably not generate very coherent completions, but just try it out for fun :)

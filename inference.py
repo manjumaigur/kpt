@@ -54,6 +54,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--checkpoint", type=str, help="path to model checkpoint", required=True
     )
+    parser.add_argument(
+        "--tokenizer", type=str, help="path to tokenizer .bpe file", required=True
+    )
     parser.add_argument("--input", type=str, help="input text", required=True)
     parser.add_argument(
         "--max-length",
@@ -66,6 +69,7 @@ if __name__ == "__main__":
     input_text = args.input.strip()
     max_length = args.max_length
     checkpoint_path = args.checkpoint
+    tokenizer_bpe_file_path = args.tokenizer
 
     if input_text == "":
         raise ValueError("Input cannot be empty")
@@ -76,7 +80,6 @@ if __name__ == "__main__":
     if not os.path.isfile(checkpoint_path):
         raise FileNotFoundError("Checkpoint not found")
 
-    tokenizer_bpe_file_path = "kpt50k.bpe"
     if not os.path.isfile(tokenizer_bpe_file_path):
         raise FileNotFoundError("Tokenizer bpe file not found")
 
