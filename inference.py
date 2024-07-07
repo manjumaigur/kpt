@@ -31,8 +31,7 @@ def run(
             logits = logits[:, -1, :]
             # get probabilities
             probs = F.softmax(logits, dim=-1)
-            # top-k sampling of 50
-            # 5, 50 & 5, 50
+            # top-k sampling of 100
             topk_probs, topk_indices = torch.topk(probs, 100, dim=-1)
 
             # Sample from the updated probabilities
