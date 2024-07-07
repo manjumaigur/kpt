@@ -31,10 +31,10 @@ KPT is an Indic large language model series trained on a dataset with both Kanna
 
 -   The model architecture is the same as that of GPT-2 and GPT-3 but with Squared ReLU activation in Feed Forward Networks instead of ReLU or GELU.
 -   Model implementation is kept simple for easy understanding and debugging.
--   Two versions of the model (KPT-125M and KPT-760M) are being trained on 4xA100 80 GB GPUs.
+-   Two versions of the model (KPT-125M and KPT-750M) are being trained on 4xA100 80 GB GPUs.
     -   A checkpoint of KPT-125M trained for 31300 steps (~16B tokens) is available [here](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-125M%2Fmodel_31299.pt).
     -   An early checkpoint of KPT-750M trained for 7400 steps (~3.7B tokens) is available [here](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-750M%2Fmodel_07400.pt).
-    -   Better checkpoints for KPT-125M and KPT-760M will be made available as soon as they're ready.
+    -   Better checkpoints for KPT-125M and KPT-750M will be made available as soon as they're ready.
     -   KPT-125M achieves 27.71% accuracy on Hellaswag validation set without any fine-tuning. I've not found a good original (without translation from english) eval dataset for Kannada yet, so I'm using Hellaswag for now.
 
 ## Instructions to use the model
