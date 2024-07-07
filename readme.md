@@ -22,7 +22,7 @@ KPT is an Indic large language model series trained on a dataset with both Kanna
 ### KPT50k tokenizer
 
 -   The new tokenizer was trained from scratch on a subset of Kannada & English text corpus and has a vocabulary size of 50,257 (same as GPT-2).
--   The tokenizer uses GPT-4's regex pattern to split tokens efficiently and is trained using the byte pair encoding (BPE) algorithm.
+-   The tokenizer uses GPT-4o's regex pattern to split tokens efficiently and is trained using the byte pair encoding (BPE) algorithm.
 -   The new tokenizer is able to handle conjunct characters and generate shorter token lists for Kannada text.
     ![kpt tokenizer](docs/image.png)
 -   The tiktoken version of the tokenizer is available [here](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-125M%2Fkpt50k.bpe).
@@ -32,7 +32,7 @@ KPT is an Indic large language model series trained on a dataset with both Kanna
 -   The model architecture is the same as that of GPT-2 and GPT-3 but with Squared ReLU activation in Feed Forward Networks instead of ReLU or GELU..
 -   Model implementation is kept simple for easy understanding and debugging.
 -   Two versions of the model (KPT-125M and KPT-760M) are being trained on 4xA100 80 GB GPUs.
-    -   A checkpoint (trained on ~6 billion tokens) of KPT-125M is available [here]().
+    -   A checkpoint (trained on ~6 billion tokens) of KPT-125M is available [here](https://pub-43f56be326594cbe8fc3226f999a9886.r2.dev/kpt-125M%2Fmodel_12300.pt).
     -   Better checkpoints for KPT-125M and KPT-760M will be made available as soon as they're ready.
 
 ## Instructions to use the model
