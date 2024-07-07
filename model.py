@@ -1,3 +1,4 @@
+from dataclasses import dataclass, asdict
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
@@ -5,8 +6,37 @@ from torch.nn import functional as F
 
 def initialize_weight_bias(layer: nn.Module, mean: float, std: float) -> None:
     layer.weight.data.normal_(mean, std)
-    if hasattr(layer, "bias"):
+    if hasattr(layer, "bias") and layer.bias is not None:
         layer.bias.data.zero_()
+
+
+def _validate_config(config: dict) -> bool:
+    # very naive way of validating
+    required_keys = [
+        "embed_size",
+        "context_length",
+        "n_layer",
+        "n_head",
+        "vocab_size",
+    ]
+    for _key in required_keys:
+        if _key not in config:
+            raise KeyError(f"key {_key} not found in config")
+
+        assert config[_key] > 0, f"{_key} should be positive"
+
+        # TODO: Add more validations
+
+    return True
+
+
+@dataclass
+class KPTConfig:
+    context_length: int
+    vocab_size: int
+    n_layer: int
+    n_head: int
+    embed_size: int
 
 
 class ReLUSquared(nn.Module):
@@ -17,15 +47,14 @@ class ReLUSquared(nn.Module):
 
 
 class FeedForward(nn.Module):
-    def __init__(self, config: dict) -> None:
+    def __init__(self, config: KPTConfig) -> None:
         super().__init__()
-        embed_size = config["embed_size"]
-        self.linear1 = nn.Linear(embed_size, embed_size * 4)
+        self.linear1 = nn.Linear(config.embed_size, config.embed_size * 4)
         self.squared_relu = ReLUSquared()
-        self.linear2 = nn.Linear(embed_size * 4, embed_size)
+        self.linear2 = nn.Linear(config.embed_size * 4, config.embed_size)
 
         # initialization
-        std = 0.02 * (2 * config["n_layer"]) ** -0.5
+        std = 0.02 * (2 * config.n_layer) ** -0.5
         initialize_weight_bias(self.linear1, 0.0, std)
         initialize_weight_bias(self.linear2, 0.0, std)
 
@@ -38,10 +67,10 @@ class FeedForward(nn.Module):
 
 
 class CausalSelfAttention(nn.Module):
-    def __init__(self, config: dict) -> None:
+    def __init__(self, config: KPTConfig) -> None:
         super().__init__()
-        self.embed_size = config["embed_size"]
-        self.n_head = config["n_head"]
+        self.embed_size = config.embed_size
+        self.n_head = config.n_head
 
         # key, query, value projections
         self.attention_layer = nn.Linear(self.embed_size, 3 * self.embed_size)
@@ -49,7 +78,7 @@ class CausalSelfAttention(nn.Module):
         self.out_proj = nn.Linear(self.embed_size, self.embed_size)
 
         # initialization
-        std = 0.02 * (2 * config["n_layer"]) ** -0.5
+        std = 0.02 * (2 * config.n_layer) ** -0.5
         initialize_weight_bias(self.attention_layer, 0.0, std)
         initialize_weight_bias(self.out_proj, 0.0, std)
 
@@ -77,11 +106,11 @@ class CausalSelfAttention(nn.Module):
 
 
 class DecoderLayer(nn.Module):
-    def __init__(self, config: dict) -> None:
+    def __init__(self, config: KPTConfig) -> None:
         super().__init__()
-        self.layer_norm1 = nn.LayerNorm(config["embed_size"])
+        self.layer_norm1 = nn.LayerNorm(config.embed_size)
         self.attention_block = CausalSelfAttention(config)
-        self.layer_norm2 = nn.LayerNorm(config["embed_size"])
+        self.layer_norm2 = nn.LayerNorm(config.embed_size)
         self.feed_forward_block = FeedForward(config)
 
     def forward(self, x):
@@ -92,20 +121,20 @@ class DecoderLayer(nn.Module):
 
 
 class KPT(nn.Module):
-    def __init__(self, config: dict):
+    def __init__(self, config: KPTConfig):
         super().__init__()
-        _validate_config(config)
+        _validate_config(asdict(config))
         self.config = config
-        embed_size = config["embed_size"]
-        vocab_size = config["vocab_size"]
-        self.token_embeddings = nn.Embedding(vocab_size, embed_size)
-        self.position_embeddings = nn.Embedding(config["context_length"], embed_size)
-        self.decoder_layers = nn.ModuleList(
-            DecoderLayer(config) for _ in range(config["n_layer"])
+        self.token_embeddings = nn.Embedding(config.vocab_size, config.embed_size)
+        self.position_embeddings = nn.Embedding(
+            config.context_length, config.embed_size
         )
-        self.layer_norm = nn.LayerNorm(embed_size)
+        self.decoder_layers = nn.ModuleList(
+            DecoderLayer(self.config) for _ in range(config.n_layer)
+        )
+        self.layer_norm = nn.LayerNorm(config.embed_size)
 
-        self.output_head = nn.Linear(embed_size, vocab_size, bias=False)
+        self.output_head = nn.Linear(config.embed_size, config.vocab_size, bias=False)
 
         # weight sharing
         self.token_embeddings.weight = self.output_head.weight
@@ -118,7 +147,7 @@ class KPT(nn.Module):
 
     def forward(self, x):
         batch_size, context_length = x.size()
-        assert context_length <= self.config["context_length"]
+        assert context_length <= self.config.context_length
 
         # position embeddings
         pos = torch.arange(0, context_length, dtype=torch.long, device=x.device)
@@ -139,23 +168,3 @@ class KPT(nn.Module):
         logits = self.output_head(x)
 
         return logits
-
-
-def _validate_config(self, config: dict) -> bool:
-    # very naive way of validating
-    required_keys = [
-        "embed_size",
-        "context_length",
-        "n_layer",
-        "n_head",
-        "vocab_size",
-    ]
-    for _key in required_keys:
-        if _key not in config:
-            raise KeyError(f"key {_key} not found in config")
-
-        assert config[_key] > 0, f"{_key} should be positive"
-
-        # TODO: Add more validations
-
-    return True
